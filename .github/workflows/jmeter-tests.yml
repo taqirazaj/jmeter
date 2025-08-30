@@ -25,8 +25,8 @@ jobs:
       - name: Run JMeter test
         run: |
         
-          jmeter -n -t ./jmeter-tests/Publish.jmx -l ./results/results_publish.jtl -e -o ./results-report -j jmeter.log
-          cat jmeter.log
+          jmeter -n -t jmeter-tests/Publish.jmx -l results_publish.jtl -j jmeter.log
+
 
       - name: Upload Results
         uses: actions/upload-artifact@v4
