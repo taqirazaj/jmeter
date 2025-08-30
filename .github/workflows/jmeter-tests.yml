@@ -1,0 +1,39 @@
+name: Run JMeter Publish Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  jmeter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Download JMeter
+        run: |
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xvzf apache-jmeter-5.6.3.tgz
+          mv apache-jmeter-5.6.3 jmeter
+
+      - name: Run JMeter Publish.jmx
+        run: |
+          ./jmeter/bin/jmeter -n -t jmeter-tests/Publish.jmx -l results_publish.jtl -e -o results-report
+
+      - name: Upload JMeter Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-publish-results
+          path: |
+            results_publish.jtl
+            results-report
