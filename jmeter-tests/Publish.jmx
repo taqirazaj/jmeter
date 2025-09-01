@@ -2,8 +2,7 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Publish">
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
-      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <boolProp name="TestPlan.functional_mode">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments">
           <elementProp name="api_base_url" elementType="Argument">
@@ -35,14 +34,16 @@
       </elementProp>
     </TestPlan>
     <hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
-        <boolProp name="ThreadGroup.delayedStart">false</boolProp>
-        <intProp name="ThreadGroup.num_threads">100</intProp>
-        <intProp name="ThreadGroup.ramp_time">60</intProp>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Login Once">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <longProp name="ThreadGroup.duration">900</longProp>
+        <longProp name="ThreadGroup.delay">0</longProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">10</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -69,10 +70,6 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
-            <stringProp name="ConstantTimer.delay">6000</stringProp>
-          </ConstantTimer>
-          <hashTree/>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Cache-Control" elementType="Header">
@@ -112,13 +109,19 @@
             <stringProp name="Sample.scope">all</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <JSR223Listener guiclass="TestBeanGUI" testclass="JSR223Listener" testname="JSR223 Listener">
+          <JSR223Listener guiclass="TestBeanGUI" testclass="JSR223Listener" testname="JSR223 Listener" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
-            <stringProp name="script">log.info(&quot;🔎 AccessToken = &quot; + vars.get(&quot;accessToken&quot;))
-log.info(&quot;🔎 IdToken = &quot; + vars.get(&quot;idToken&quot;))
-
+            <stringProp name="script">def at = vars.get(&apos;accessToken&apos;)
+def it = vars.get(&apos;idToken&apos;)
+props.put(&apos;ACCESS_TOKEN&apos;, at ?: &apos;&apos;)
+props.put(&apos;ID_TOKEN&apos;, it ?: &apos;&apos;)
+if (!at || !it) {
+  log.warn(&apos;⚠️ Token extraction failed: accessToken=&apos; + at + &apos;, idToken=&apos; + it)
+} else {
+  log.info(&apos;✅ Stored tokens in props&apos;)
+}
 </stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223Listener>
@@ -161,43 +164,19 @@ log.info(&quot;🔎 IdToken = &quot; + vars.get(&quot;idToken&quot;))
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>false</xml>
-              <fieldNames>true</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-              <sentBytes>true</sentBytes>
-              <url>true</url>
-              <threadCounts>true</threadCounts>
-              <idleTime>true</idleTime>
-              <connectTime>true</connectTime>
-            </value>
-          </objProp>
-          <stringProp name="filename"></stringProp>
-        </ResultCollector>
-        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+        <intProp name="ThreadGroup.num_threads">200</intProp>
+        <intProp name="ThreadGroup.ramp_time">600</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request">
           <stringProp name="HTTPSampler.domain">${api_base_url}</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -271,16 +250,13 @@ log.info(&quot;🔎 IdToken = &quot; + vars.get(&quot;idToken&quot;))
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
-            <stringProp name="ConstantTimer.delay">6000</stringProp>
-          </ConstantTimer>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Uniform Random Timer">
+            <stringProp name="ConstantTimer.delay">0</stringProp>
+            <stringProp name="RandomTimer.range">5000</stringProp>
+          </UniformRandomTimer>
           <hashTree/>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
-              <elementProp name="x-id-token" elementType="Header">
-                <stringProp name="Header.name">x-id-token</stringProp>
-                <stringProp name="Header.value">${idToken}</stringProp>
-              </elementProp>
               <elementProp name="x-tenant-id" elementType="Header">
                 <stringProp name="Header.name">x-tenant-id</stringProp>
                 <stringProp name="Header.value">3401</stringProp>
@@ -299,7 +275,11 @@ log.info(&quot;🔎 IdToken = &quot; + vars.get(&quot;idToken&quot;))
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${accessToken}</stringProp>
+                <stringProp name="Header.value">Bearer ${__P(ACCESS_TOKEN)}</stringProp>
+              </elementProp>
+              <elementProp name="x-id-token" elementType="Header">
+                <stringProp name="Header.name">x-id-token</stringProp>
+                <stringProp name="Header.value">${__P(ID_TOKEN)}</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
@@ -401,24 +381,24 @@ log.info(&quot;🔎 IdToken = &quot; + vars.get(&quot;idToken&quot;))
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;restaurantId&quot;:4489,&quot;isPublished&quot;:true,&quot;businessId&quot;:4555}&#xd;
-</stringProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;restaurantId&quot;: 3499,&#xd;
+    &quot;isPublished&quot;: true,&#xd;
+    &quot;businessId&quot;: 3401&#xd;
+}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
-            <stringProp name="ConstantTimer.delay">6000</stringProp>
-          </ConstantTimer>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Uniform Random Timer">
+            <stringProp name="ConstantTimer.delay">0</stringProp>
+            <stringProp name="RandomTimer.range">5000</stringProp>
+          </UniformRandomTimer>
           <hashTree/>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
-              <elementProp name="x-id-token" elementType="Header">
-                <stringProp name="Header.name">x-id-token</stringProp>
-                <stringProp name="Header.value">${idToken}</stringProp>
-              </elementProp>
               <elementProp name="x-tenant-id" elementType="Header">
                 <stringProp name="Header.name">x-tenant-id</stringProp>
                 <stringProp name="Header.value">3401</stringProp>
@@ -435,9 +415,13 @@ log.info(&quot;🔎 IdToken = &quot; + vars.get(&quot;idToken&quot;))
                 <stringProp name="Header.name">Accept</stringProp>
                 <stringProp name="Header.value">application/json</stringProp>
               </elementProp>
+              <elementProp name="x-id-token" elementType="Header">
+                <stringProp name="Header.name">x-id-token</stringProp>
+                <stringProp name="Header.value">${__P(ID_TOKEN)}</stringProp>
+              </elementProp>
               <elementProp name="Authorization" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${accessToken}</stringProp>
+                <stringProp name="Header.value">Bearer ${__P(ACCESS_TOKEN)}</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
