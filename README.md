@@ -140,11 +140,3 @@ Open `results/html-report/index.html` in your browser.
 
 ---
 
-## ✅ Best Practices
-
-* Do not commit sensitive credentials (`username`, `password`) — use environment variables.
-* Run in **non-GUI mode** for heavy loads.
-* Use **tokens from Login TG** in Business TG (already implemented).
-* Adjust **users, ramp-up, duration** based on your target load.
-
----
