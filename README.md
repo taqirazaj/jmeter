@@ -31,7 +31,6 @@ Before running, ensure you have:
 .
 ├── jmeter-tests/
 │   └── Publish.jmx       # Main JMeter test plan
-├── results/              # Results (.jtl, .csv) will be saved here
 ├── README.md             # Documentation
 ```
 
