@@ -27,15 +27,15 @@
     <hashTree>
       <!-- Login Thread Group -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Login Once">
-        <intProp name="ThreadGroup.num_threads">${__P(login_threads,1)}</intProp>
-        <intProp name="ThreadGroup.ramp_time">${__P(login_rampup,1)}</intProp>
-        <longProp name="ThreadGroup.duration">${__P(login_duration,900)}</longProp>
-        <longProp name="ThreadGroup.delay">${__P(login_delay,0)}</longProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(login_threads,1)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(login_rampup,1)}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(login_duration,900)}</stringProp>
+        <stringProp name="ThreadGroup.delay">${__P(login_delay,0)}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
-          <intProp name="LoopController.loops">${__P(login_loops,-1)}</intProp>
+          <stringProp name="LoopController.loops">${__P(login_loops,-1)}</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -93,10 +93,10 @@ props.put('ID_TOKEN', it ?: '')</stringProp>
       <!-- Main Load Thread Group -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
         <boolProp name="ThreadGroup.delayedStart">true</boolProp>
-        <intProp name="ThreadGroup.num_threads">${__P(threads,200)}</intProp>
-        <intProp name="ThreadGroup.ramp_time">${__P(rampup,600)}</intProp>
-        <longProp name="ThreadGroup.duration">${__P(duration,0)}</longProp>
-        <longProp name="ThreadGroup.delay">${__P(delay,0)}</longProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(threads,200)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(rampup,600)}</stringProp>
+        <stringProp name="ThreadGroup.duration">${__P(duration,0)}</stringProp>
+        <stringProp name="ThreadGroup.delay">${__P(delay,0)}</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
           <stringProp name="LoopController.loops">${__P(loops,1)}</stringProp>
         </elementProp>
