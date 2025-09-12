@@ -1,9 +1,52 @@
 name: JMeter Tests
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
+    inputs:
+      threads:
+        description: 'Number of threads (users)'
+        required: true
+        default: '200'
+      rampup:
+        description: 'Ramp-up period (seconds)'
+        required: true
+        default: '600'
+      duration:
+        description: 'Test duration (seconds)'
+        required: true
+        default: '900'
+      loops:
+        description: 'Loop count (-1 for infinite)'
+        required: true
+        default: '1'
+      login_username:
+        description: 'Login username'
+        required: true
+        default: 'ahmed.saeed+uatt@aioapp.com'
+      login_password:
+        description: 'Login password'
+        required: true
+        default: 'AIO15@uat'
+      api_base_url:
+        description: 'API base URL'
+        required: true
+        default: 'uatv2-backend.dev.aioapp.com'
+      x_tenant_id:
+        description: 'Tenant ID'
+        required: true
+        default: '3401'
+      x_app_name:
+        description: 'App name'
+        required: true
+        default: 'dashboard'
+      restaurant_id:
+        description: 'Restaurant ID'
+        required: true
+        default: '3499'
+      modifier_id:
+        description: 'Modifier ID'
+        required: true
+        default: '103'
 
 jobs:
   performance-test:
@@ -29,7 +72,21 @@ jobs:
 
       - name: Run JMeter test
         run: |
-          jmeter -n -t jmeter-tests/Publish.jmx -l results_publish.jtl -j jmeter.log
+          jmeter -n \
+            -t jmeter-tests/Publish.jmx \
+            -l results_publish.jtl \
+            -j jmeter.log \
+            -Jthreads=${{ github.event.inputs.threads }} \
+            -Jrampup=${{ github.event.inputs.rampup }} \
+            -Jduration=${{ github.event.inputs.duration }} \
+            -Jloops=${{ github.event.inputs.loops }} \
+            -Jlogin_username=${{ github.event.inputs.login_username }} \
+            -Jlogin_password=${{ github.event.inputs.login_password }} \
+            -Japi_base_url=${{ github.event.inputs.api_base_url }} \
+            -Jx_tenant_id=${{ github.event.inputs.x_tenant_id }} \
+            -Jx_app_name=${{ github.event.inputs.x_app_name }} \
+            -Jrestaurant_id=${{ github.event.inputs.restaurant_id }} \
+            -Jmodifier_id=${{ github.event.inputs.modifier_id }}
 
       - name: Upload Results
         uses: actions/upload-artifact@v4
